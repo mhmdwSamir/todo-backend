@@ -6,5 +6,5 @@ class Exception {
   }
 }
 
-// exports.Exception = Exception;
+
 module.exports = Exception;
