@@ -3,6 +3,18 @@ const Exception = require("../core/helpers/Exception");
 const { http_status_code } = require("../core/helpers/http_status_code");
 
 module.exports = {
+  getAllTasks: async (req, res) => {
+    try {
+      // console.log(req.body);
+      let { content } = req.body;
+      console.log(content);
+      let tasks = await Task.find({ content });
+      res.send(tasks);
+    } catch (err) {
+      res.send(5000);
+    }
+  },
+
   addTask: async (req, res) => {
     try {
       // get all task feild
