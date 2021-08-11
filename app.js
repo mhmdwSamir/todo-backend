@@ -1,10 +1,8 @@
+//connection db
+require("./core/db/db")();
 const express = require("express");
 const app = express();
-const { conectDb } = require("./db");
 const taskRouter = require("./routes/task.router");
-
-// connection to db
-conectDb();
 
 //For JSON requests
 app.use(express.json());
