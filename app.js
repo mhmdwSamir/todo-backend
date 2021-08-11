@@ -1,12 +1,17 @@
 const express = require("express");
 const app = express();
 const { conectDb } = require("./db");
-const { Task } = require("./models/task.model");
+const taskRouter = require("./routes/task.router");
 
 // connection to db
 conectDb();
 
-new Task({ content: "that is my first task" }).save();
+//For JSON requests
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// routes
+app.use("/api", taskRouter);
 
 app.listen(3000, () => {
   console.info("Server is live with port 3000");

@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-
 const conectDb = async () => {
   await mongoose
     .connect("mongodb://localhost/todoapp", {
