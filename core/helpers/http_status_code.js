@@ -9,4 +9,5 @@ exports.http_status_code = {
   ok: 200,
   Created: 201,
   Accepted: 202,
+  NoContent: 204,
 };

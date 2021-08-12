@@ -5,13 +5,18 @@ const { http_status_code } = require("../core/helpers/http_status_code");
 module.exports = {
   getAllTasks: async (req, res) => {
     try {
-      // console.log(req.body);
-      let { content } = req.body;
-      console.log(content);
-      let tasks = await Task.find({ content });
+      let tasks = await Task.find();
+      // here check for some scenario
+      if (tasks.length == 0) {
+        throw new Exception(
+          "No content for wright now",
+          http_status_code.NoContent,
+          "NOCONTN787"
+        );
+      }
       res.send(tasks);
-    } catch (err) {
-      res.send(5000);
+    } catch ({ message, statusCode }) {
+      res.send(message).status(statusCode);
     }
   },
 
