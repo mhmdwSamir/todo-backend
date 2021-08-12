@@ -9,7 +9,9 @@ const taskRouter = require("./routes/task.router");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-// routes
+
+/* routes */
+// task route
 app.use("/api", taskRouter);
 
 app.listen(3000, () => {

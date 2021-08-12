@@ -49,4 +49,29 @@ module.exports = {
       });
     }
   },
+  deleteTaskById: async (req, res) => {
+    try {
+      // get id of task to delete
+      let _id = req.params.id;
+      console.log(_id);
+      // handle case if no id was provided
+      if (!_id)
+        throw new Exception(
+          "No Id Provided",
+          http_status_code.BadRequest,
+          "55JHui"
+        );
+      let task = await Task.findById(_id);
+      if (!task)
+        throw new Exception(
+          "No Task with the given Id ",
+          http_status_code.NoContent,
+          "JLVK58"
+        );
+      task = await Task.findByIdAndDelete(_id);
+      res.send({ deletedTask: task, message: "deleted Successfully" });
+    } catch (err) {
+      res.send(err);
+    }
+  },
 };
