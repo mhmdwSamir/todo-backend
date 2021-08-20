@@ -5,6 +5,7 @@ exports.http_status_code = {
   RequestTimeOut: 408,
   Forbidden: 403,
   TooManyRequests: 429,
+  NOT_FOUND: 404,
   InternalServerError: 500,
   ok: 200,
   Created: 201,

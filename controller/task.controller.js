@@ -1,7 +1,6 @@
 const Task = require("../models/task.model");
 const Exception = require("../core/helpers/Exception");
 const { http_status_code } = require("../core/helpers/http_status_code");
-
 module.exports = {
   getAllTasks: async (req, res) => {
     try {
@@ -9,14 +8,36 @@ module.exports = {
       // here check for some scenario
       if (tasks.length == 0) {
         throw new Exception(
-          "No content for wright now",
-          http_status_code.NoContent,
+          "No Tasks for wright now , Add One ! or No Tasks with the given criteria",
+          http_status_code.NOT_FOUND,
           "NOCONTN787"
         );
       }
       res.send(tasks);
     } catch ({ message, statusCode }) {
-      res.send(message).status(statusCode);
+      res.status(statusCode).send(message);
+    }
+  },
+  // duplication for code HERE
+
+  getCompletedTasks: async (req, res) => {
+    try {
+      let tasks = await Task.find({
+        completed: req.query.completed == "true",
+      });
+      res.send(tasks);
+    } catch (error) {
+      res.status(404).send(error);
+    }
+  },
+  getActiveTasks: async (req, res) => {
+    try {
+      let tasks = await Task.find({
+        completed: req.query.completed == "false",
+      });
+      res.send(tasks);
+    } catch (error) {
+      res.status(404).send(error);
     }
   },
 
