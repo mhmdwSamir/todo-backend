@@ -7,5 +7,6 @@ router.get("/getAllTasks", taskController.getAllTasks);
 router.get("/getCompletedTasks", taskController.getCompletedTasks);
 router.get("/getActiveTasks", taskController.getActiveTasks);
 router.delete("/deleteTask/:id", taskController.deleteTaskById);
+router.delete("/deleteAllTasks", taskController.deleteCompletedTasks);
 
 module.exports = router;

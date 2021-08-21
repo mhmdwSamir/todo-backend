@@ -95,4 +95,18 @@ module.exports = {
       res.send(err);
     }
   },
+  deleteCompletedTasks: async (req, res) => {
+    try {
+      let tasks = await Task.deleteMany({
+        completed: true,
+      });
+
+      res.send({
+        state: " Deleted Success ",
+        deletedCount: tasks.deletedCount + ` Record `,
+      });
+    } catch (error) {
+      res.status(404).send(error);
+    }
+  },
 };
