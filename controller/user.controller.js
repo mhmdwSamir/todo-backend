@@ -7,7 +7,6 @@ const { http_status_code } = require("../core/helpers/http_status_code");
 module.exports = {
   signup: async (req, res) => {
     try {
-      console.log(process.env.SALT_ROUNDS);
       // get all user information
       let { userName, email, password } = req.body;
       // check for all feilds is founded
@@ -18,6 +17,7 @@ module.exports = {
           "bad541JK"
         );
       }
+      // check if the user already sign up before
       let userExist = await User.findOne({ email });
 
       if (userExist) {
@@ -28,7 +28,10 @@ module.exports = {
         );
       }
 
-      let hashedPassword = await bcrypt.hash(password, process.env.SALT_ROUNDS);
+      let hashedPassword = await bcrypt.hash(
+        password,
+        parseInt(process.env.SALT)
+      );
 
       let user = new User({
         userName,
@@ -39,7 +42,6 @@ module.exports = {
       user = await user.save();
       res.send(user);
     } catch (error) {
-      console.log(error);
       res.status(error.statusCode || 500).send(error);
     }
   },

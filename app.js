@@ -17,6 +17,6 @@ app.use("/api", taskRouter);
 // user route
 app.use("/api", userRouter);
 
-app.listen(process.env.PORT, () => {
+app.listen(parseInt(process.env.PORT), () => {
   console.info(` Server is live with port ${process.env.PORT}`);
 });
