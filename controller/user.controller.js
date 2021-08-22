@@ -49,7 +49,7 @@ module.exports = {
 
   logIn: async (req, res) => {
     try {
-      //get user info from req body
+      //get user info from req body.
       let { email, password } = req.body;
       // check if there is a user with this email
       let userExist = await User.findOne({ email });
