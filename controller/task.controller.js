@@ -3,12 +3,24 @@ const Exception = require("../core/helpers/Exception");
 const { http_status_code } = require("../core/helpers/http_status_code");
 module.exports = {
   getAllTasks: async (req, res) => {
+    let query = {};
     try {
-      let tasks = await Task.find();
+      console.log(req.query.completed);
+      if (req.query && Object.keys(req.query).length != 0) {
+        query = {
+          content: {
+            $regex: req.query.content,
+            $options: "i",
+          },
+          // completed: req.query.completed,
+        };
+      }
+
+      let tasks = await Task.find(query);
       // here check for some scenario
       if (tasks.length == 0) {
         throw new Exception(
-          "No Tasks for wright now , Add One ! or No Tasks with the given criteria",
+          "No Tasks with the given criteria",
           http_status_code.NOT_FOUND,
           "NOCONTN787"
         );
