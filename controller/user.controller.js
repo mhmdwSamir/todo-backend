@@ -41,7 +41,10 @@ module.exports = {
       });
 
       user = await user.save();
-      res.send({ user });
+      res.send({
+        id: user._id,
+        userName: user.userName,
+      });
     } catch (error) {
       res.status(error.statusCode || 500).send(error);
     }
@@ -53,10 +56,11 @@ module.exports = {
       let { email, password } = req.body;
       // check if there is a user with this email
       let userExist = await User.findOne({ email });
+      console.log(userExist);
       // if no user With the email , throw error
       if (!userExist) {
         throw new Exception(
-          "Please Sign Up firest befor log in  ",
+          "Please Sign Up first befor log in  ",
           http_status_code.BadRequest,
           "lhfd54TYG"
         );
@@ -74,9 +78,31 @@ module.exports = {
       // create token for user
       let token = jwt.sign({ id: userExist._id }, process.env.APP_SECRET_KEY);
       // let the user logIn
-      res.send({ userExist, token });
+      res.send({
+        user: {
+          id: userExist._id,
+          userName: userExist.userName,
+          email: userExist.email,
+        },
+        token,
+      });
     } catch (error) {
-      res.status(error.statusCode).send(error);
+      console.log("ERROR ", error);
+      res.status(error.statusCode || 500).send(error);
+    }
+  },
+
+  //
+  checkToken: (req, res) => {
+    try {
+      //get token from headers.authorizations
+      let token = req.headers.authorization;
+      let decodedObj = jwt.verify(token, process.env.APP_SECRET_KEY);
+      res.send({ currentUserId: decodedObj.id });
+    } catch (ex) {
+      res.status(http_status_code.BadRequest).send({
+        message: " Your token is not valid ",
+      });
     }
   },
 };

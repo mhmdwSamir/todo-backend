@@ -4,33 +4,57 @@ const { http_status_code } = require("../core/helpers/http_status_code");
 module.exports = {
   getAllTasks: async (req, res) => {
     let query = {};
+    // filter
+    if (req.query.content) {
+      query = {
+        content: {
+          $regex: req.query.content,
+          $options: "i",
+        },
+      };
+    }
+    // For sorting
+    let sortQuery = {};
+    if (req.query.sortBy) {
+      sortFeild = req.query.sortBy;
+      sortQuery = {
+        [sortFeild]: "asc",
+      };
+    }
+    // pagination
+    let limit;
+    let skip;
+    if (req.query.limit && req.query.page) {
+      limit = +req.query.limit; // 10
+      skip = (+req.query.page - 1) * limit; // (5 -1)*10
+    }
     try {
-      console.log(req.query.completed);
-      if (req.query && Object.keys(req.query).length != 0) {
-        query = {
-          content: {
-            $regex: req.query.content,
-            $options: "i",
-          },
-          // completed: req.query.completed,
-        };
-      }
+      // Now One has User attached to [ req.user ]
+      let tasks = await Task.find(query)
+        .sort(sortQuery)
+        .skip(skip)
+        .limit(limit);
+      // count all Tasks
+      let tasksLength = await Task.countDocuments();
 
-      let tasks = await Task.find(query);
       // here check for some scenario
       if (tasks.length == 0) {
         throw new Exception(
-          "No Tasks with the given criteria",
+          "No Tasks Until Now , Add ONE right now",
           http_status_code.NOT_FOUND,
           "NOCONTN787"
         );
       }
-      res.send(tasks);
+
+      res.send({
+        status: "OK , Success Operation",
+        allTasksLength: tasksLength,
+        data: tasks,
+      });
     } catch ({ message, statusCode }) {
-      res.status(statusCode).send(message);
+      res.status(statusCode || 500).send(message);
     }
   },
-  // duplication for code HERE
 
   getCompletedTasks: async (req, res) => {
     try {
@@ -56,7 +80,7 @@ module.exports = {
   addTask: async (req, res) => {
     try {
       // get all task feild
-      let { content, completed } = req.body;
+      let { content, completed, createdBy, rate } = req.body;
       // validate it
       if (!content)
         throw new Exception(
@@ -65,7 +89,7 @@ module.exports = {
           "BadxxR"
         );
       // create task with req body and save it in db
-      let task = new Task({ content, completed });
+      let task = new Task({ content, completed, createdBy, rate });
       task = await task.save();
       // response with message
       res.send({
@@ -74,7 +98,7 @@ module.exports = {
         data: task,
       });
     } catch ({ message, statusCode, codeException }) {
-      res.status(statusCode).send({
+      res.status(statusCode || 500).send({
         status: "Fail",
         Error: message,
         statusCode: statusCode,

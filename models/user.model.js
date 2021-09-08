@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { Schema, model } = require("mongoose");
 const userSchema = new Schema({
   userName: {
@@ -12,11 +13,13 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: true,
+    select: true,
   },
   date: {
     type: Date,
     default: Date.now,
   },
+  tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 });
 
 module.exports = model("User", userSchema);

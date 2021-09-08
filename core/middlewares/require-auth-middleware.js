@@ -2,7 +2,8 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 const Exception = require("../helpers/Exception");
 const { http_status_code } = require("../helpers/http_status_code");
-module.exports = (req, res, next) => {
+const User = require("../../models/user.model");
+module.exports = async (req, res, next) => {
   try {
     // get the token fron request header
     let token = req.headers.authorization;
@@ -15,18 +16,15 @@ module.exports = (req, res, next) => {
       );
     }
     // verfiy it using jwt.
-    let tokenVerified = jwt.verify(token, process.env.APP_SECRET_KEY);
-    if (!tokenVerified) {
-      new Exception(
-        "Something went wrong , try again or log in",
-        http_status_code.Unauthorized,
-        "DSDDF5165"
-      );
-    }
-    console.log(" is token verfied ", tokenVerified);
+    let userPayload = jwt.verify(token, process.env.APP_SECRET_KEY);
+    // get the user from his payload
+    const user = await User.findById(userPayload.id);
+    // attach aproperty to req called user with current User
+    req.user = user;
     next();
   } catch (ex) {
-    console.log(ex);
-    res.status(401).send(ex);
+    res.status(401).send({
+      message: " UnAutorized to aceess this route you must login first  ",
+    });
   }
 };
